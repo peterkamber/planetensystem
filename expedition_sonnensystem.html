@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="de" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expedition Sonnensystem – Interaktives Lernportal (Sek I / LP 21)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Space Grotesk', 'sans-serif'],
+          },
+          colors: {
+            space: {
+              950: '#030712',
+              900: '#070b19',
+              850: '#0c1228',
+              800: '#111836',
+              700: '#1f2954',
+              accent: '#38bdf8',
+              sun: '#f59e0b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #030712;
+      color: #e2e8f0;
+      overflow-x: hidden;
+    }
+    .space-grid {
+      background-size: 40px 40px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    }
+    .glow-sun {
+      box-shadow: 0 0 50px rgba(245, 158, 11, 0.45);
+    }
+    .glass-panel {
+      background: rgba(12, 18, 40, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-card {
+      background: rgba(17, 24, 54, 0.6);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(56, 189, 248, 0.12);
+      transition: all 0.25s ease-in-out;
+    }
+    .glass-card:hover {
+      border-color: rgba(56, 189, 248, 0.4);
+      transform: translateY(-2px);
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #070b19;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1f2954;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #38bdf8;
+    }
+  </style>
+</head>
+<body class="font-sans antialiased selection:bg-cyan-500 selection:text-white space-grid">
+
+  <!-- Header & Lehrplan 21 Einordnung -->
+  <header class="sticky top-0 z-50 glass-panel border-b border-cyan-900/30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-amber-500 via-orange-500 to-yellow-300 flex items-center justify-center shadow-lg shadow-amber-500/20 ring-2 ring-amber-400/40">
+            <span class="text-xl">🪐</span>
+          </div>
+          <div>
+            <div class="text-xs uppercase tracking-widest font-mono text-cyan-400 font-semibold">Sekundarstufe I · NT & RZG</div>
+            <h1 class="font-display text-lg sm:text-xl font-bold tracking-tight text-white flex items-center gap-2">
+              Expedition Sonnensystem
+              <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">LP 21 konform</span>
+            </h1>
+          </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="hidden md:flex space-x-1 lg:space-x-3 text-sm font-medium">
+          <a href="#simulation" class="px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-space-800 transition">Simulation</a>
+          <a href="#dossiers" class="px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-space-800 transition">Planeten-Dossiers</a>
+          <a href="#tools" class="px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-space-800 transition">Labor & Rechner</a>
+          <a href="#quiz" class="px-3 py-2 rounded-lg bg-cyan-600/20 text-cyan-300 hover:bg-cyan-600/40 border border-cyan-500/30 transition">Kompetenz-Check</a>
+        </nav>
+
+        <button onclick="toggleModal('lp21-modal')" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700 transition flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+          </svg>
+          <span>Lehrplan 21 Info</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- LP 21 Modal -->
+  <div id="lp21-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div class="glass-panel max-w-2xl w-full p-6 sm:p-8 rounded-2xl shadow-2xl border border-cyan-500/30 relative max-h-[90vh] overflow-y-auto">
+      <button onclick="toggleModal('lp21-modal')" class="absolute top-5 right-5 text-slate-400 hover:text-white text-2xl font-bold">&times;</button>
+      <div class="flex items-center gap-3 mb-4">
+        <span class="text-2xl">🇨🇭</span>
+        <h3 class="text-xl font-display font-bold text-white">Didaktische Einbettung: Schweizer Lehrplan 21</h3>
+      </div>
+      <p class="text-sm text-slate-300 leading-relaxed mb-4">
+        Dieses Portal wurde gezielt für den Unterrichtszyklus 3 (7.–9. Klasse) konzipiert. Es verbindet astronomisches Fachwissen mit physikalischen Prinzipien (Gravitation, Trägheit, Strahlung) und fördert forschend-entdeckendes Lernen:
+      </p>
+      <div class="space-y-3 mb-6 text-sm">
+        <div class="p-3 bg-space-850 rounded-xl border border-cyan-900/40">
+          <strong class="text-cyan-400 block font-mono text-xs">Fachbereich Natur und Technik (NT.8.3):</strong>
+          <span class="text-slate-200">Die Schülerinnen und Schüler können Aufbau und Phänomene des Sonnensystems beschreiben (Reihenfolge, Gesteins- vs. Gasplaneten, Umlaufzeiten, Gravitationsgesetz als Ursache für Orbitalbahnen).</span>
+        </div>
+        <div class="p-3 bg-space-850 rounded-xl border border-cyan-900/40">
+          <strong class="text-cyan-400 block font-mono text-xs">Fachbereich Räume, Zeiten, Gesellschaften (RZG.4.1):</strong>
+          <span class="text-slate-200">Die Schülerinnen und Schüler können die Erde als System sowie die Ursachen für Jahreszeiten, Tag und Nacht anhand von Neigungswinkel und Ekliptik erklären.</span>
+        </div>
+        <div class="p-3 bg-space-850 rounded-xl border border-cyan-900/40">
+          <strong class="text-cyan-400 block font-mono text-xs">Naturwissenschaftliche Denk- & Arbeitsweisen:</strong>
+          <span class="text-slate-200">Modellkritik anwenden (z.B. Warum verzerren Schulbuch-Grafiken die Abstände im Weltraum und wie sieht die Realität bei 1 AE aus?).</span>
+        </div>
+      </div>
+      <div class="flex justify-end">
+        <button onclick="toggleModal('lp21-modal')" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-sm font-semibold transition">Verstanden & Loslegen</button>
+      </div>
+    </div>
+  </div>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-16">
+
+    <!-- Hero / Merksatz Info-Banner -->
+    <div class="relative rounded-3xl p-6 sm:p-8 bg-gradient-to-r from-space-900 via-space-850 to-space-800 border border-slate-800 overflow-hidden shadow-2xl">
+      <div class="absolute -right-10 -bottom-10 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="relative z-10 max-w-4xl space-y-4">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/80 border border-cyan-500/30 text-cyan-300 text-xs font-mono">
+          <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+          Interaktive Lernumgebung 7.–9. Klasse
+        </div>
+        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-display font-black text-white tracking-tight leading-tight">
+          Unser Sonnensystem: <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-cyan-400 to-blue-500">Massen, Mythen & wahre Distanzen</span>
+        </h2>
+        <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
+          Wie schwer wärst du auf Jupiter? Warum schwitzt man auf der Venus mehr als auf Merkur, obwohl sie weiter weg ist? Und wie winzig ist die Erde im Vergleich zum leeren All? Erkunde die physikalischen Gesetze unserer kosmischen Heimat.
+        </p>
+
+        <!-- Merksatz-Leiste -->
+        <div class="mt-6 pt-5 border-t border-slate-800/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div class="text-xs uppercase font-mono text-amber-400 font-semibold mb-1">Klassischer Merksatz zur Reihenfolge:</div>
+            <div class="font-display font-medium text-sm sm:text-base text-slate-200">
+              <span class="text-amber-400 font-bold">M</span>ein 
+              <span class="text-amber-400 font-bold">V</span>ater 
+              <span class="text-amber-400 font-bold">e</span>rklärt 
+              <span class="text-amber-400 font-bold">m</span>ir 
+              <span class="text-amber-400 font-bold">j</span>eden 
+              <span class="text-amber-400 font-bold">S</span>onntag 
+              <span class="text-amber-400 font-bold">u</span>nseren 
+              <span class="text-amber-400 font-bold">N</span>achthimmel!
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-1.5 text-xs font-mono text-slate-400">
+            <span class="px-2 py-1 bg-space-950 rounded border border-slate-800">Merkur</span>
+            <span class="px-2 py-1 bg-space-950 rounded border border-slate-800">Venus</span>
+            <span class="px-2 py-1 bg-space-950 rounded border border-slate-800">Erde</span>
+            <span class="px-2 py-1 bg-space-950 rounded border border-slate-800">Mars</span>
+            <span class="px-2 py-1 bg-space-950 rounded border border-slate-800">Jupiter</span>
+            <span class="px-2 py-1 bg-space-950 rounded border border-slate-800">Saturn</span>
+            <span class="px-2 py-1 bg-space-950 rounded border border-slate-800">Uranus</span>
+            <span class="px-2 py-1 bg-space-950 rounded border border-slate-800">Neptun</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modul 1: Interaktive Simulation -->
+    <section id="simulation" class="scroll-mt-24 space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+        <div>
+          <div class="text-xs font-mono uppercase tracking-wider text-cyan-400">Modul 1 · Live-Orrery</div>
+          <h2 class="text-2xl sm:text-3xl font-display font-bold text-white">Interaktive Planeten-Dynamik</h2>
+          <p class="text-slate-400 text-sm mt-1">Klicke auf einen Himmelskörper, um ihn sofort zu analysieren. Nutze Regler für Tempo & Ansicht.</p>
+        </div>
+        <!-- Status Indicator -->
+        <div class="flex items-center gap-2 self-start sm:self-auto bg-space-900 border border-slate-800 px-3 py-1.5 rounded-xl text-xs font-mono text-slate-300">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span id="sim-status-text">Umlaufbahnen aktiv</span>
+        </div>
+      </div>
+
+      <!-- Canvas Container -->
+      <div class="relative w-full rounded-2xl overflow-hidden glass-panel border border-cyan-900/40 shadow-2xl bg-space-950 flex flex-col">
+        
+        <!-- Controls Toolbar -->
+        <div class="flex flex-wrap items-center justify-between gap-3 p-4 border-b border-slate-800/80 bg-space-900/90 text-sm">
+          <div class="flex items-center gap-2">
+            <button id="btn-toggle-sim" class="px-3.5 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-medium text-xs sm:text-sm flex items-center gap-1.5 transition">
+              <svg id="play-pause-icon" class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+              <span id="btn-play-label">Pause</span>
+            </button>
+            <button id="btn-reset-view" class="px-3 py-1.5 rounded-lg bg-space-800 hover:bg-space-700 text-slate-300 hover:text-white text-xs sm:text-sm transition">
+              Zentrieren
+            </button>
+          </div>
+
+          <!-- Speed Slider -->
+          <div class="flex items-center gap-2 text-xs font-mono text-slate-300">
+            <label for="speed-range">Tempo:</label>
+            <input id="speed-range" type="range" min="0.1" max="4.0" step="0.1" value="1.0" class="w-24 sm:w-32 accent-cyan-400 cursor-pointer">
+            <span id="speed-val" class="w-10 text-cyan-400 font-bold">1.0x</span>
+          </div>
+
+          <!-- Mode Switcher -->
+          <div class="flex items-center bg-space-950 rounded-lg p-1 border border-slate-800 text-xs">
+            <button id="mode-diagram" class="px-2.5 py-1 rounded bg-cyan-600 text-white font-medium transition">Didaktische Sicht</button>
+            <button id="mode-scale" class="px-2.5 py-1 rounded text-slate-400 hover:text-white transition">Massstab (Real-Distanz)</button>
+          </div>
+        </div>
+
+        <!-- Simulation Canvas Area -->
+        <div class="relative w-full h-[450px] sm:h-[540px] cursor-crosshair">
+          <canvas id="orrery-canvas" class="w-full h-full block"></canvas>
+          
+          <!-- Quick Help Overlay on Top Right -->
+          <div class="absolute bottom-3 left-3 bg-space-900/80 backdrop-blur-md px-3 py-2 rounded-xl text-xs font-mono text-slate-400 border border-slate-800 pointer-events-none">
+            💡 Tipp: Klicke auf Himmelskörper zur Inspektion · Scroll/Pinch für Zoom
+          </div>
+
+          <!-- Scale Mode Banner Note -->
+          <div id="scale-notice" class="hidden absolute top-4 left-1/2 -translate-x-1/2 bg-amber-500/20 backdrop-blur-md border border-amber-500/40 text-amber-200 px-4 py-2 rounded-xl text-xs font-mono shadow-xl max-w-md text-center">
+            ⚠️ <strong>Modellkritik-Modus aktiv:</strong> In echten Distanzen ist das Weltall fast komplett leer! Zoome weit heraus, um Neptun zu sehen.
+          </div>
+        </div>
+
+        <!-- Selected Body Footer Indicator -->
+        <div id="sim-inspect-bar" class="p-3 bg-space-900/90 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm">
+          <div class="flex items-center gap-2">
+            <span class="text-slate-400">Fokus:</span>
+            <span id="inspect-name" class="font-bold text-cyan-400 font-display text-base">Erde (Dritter Planet)</span>
+            <span id="inspect-tag" class="px-2 py-0.5 rounded text-[11px] bg-blue-500/20 text-blue-300 font-mono">Gesteinsplanet</span>
+          </div>
+          <button id="btn-jump-dossier" class="px-3 py-1 bg-cyan-600/30 hover:bg-cyan-600/60 text-cyan-300 rounded border border-cyan-500/40 transition">
+            Dossier & Forscherfrage ansehen ↓
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Modul 2: Differenzierte Planeten-Dossiers -->
+    <section id="dossiers" class="scroll-mt-24 space-y-6">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <div class="text-xs font-mono uppercase tracking-wider text-cyan-400">Modul 2 · Systematische Analyse</div>
+          <h2 class="text-2xl sm:text-3xl font-display font-bold text-white">Steckbriefe & Forscherfragen (Sek I)</h2>
+          <p class="text-slate-400 text-sm mt-1">Vergleiche Gesteins- mit Gasplaneten und lüfte kosmische Rätsel.</p>
+        </div>
+
+        <!-- Filter Buttons -->
+        <div class="flex flex-wrap gap-1.5 p-1 bg-space-900 rounded-xl border border-slate-800 text-xs font-medium">
+          <button onclick="filterPlanets('all')" class="filter-btn active px-3 py-1.5 rounded-lg bg-cyan-600 text-white">Alle (9)</button>
+          <button onclick="filterPlanets('rocky')" class="filter-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white">Gesteinsplaneten</button>
+          <button onclick="filterPlanets('gas')" class="filter-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white">Gas- & Eisriesen</button>
+          <button onclick="filterPlanets('dwarf')" class="filter-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white">Zwergplaneten</button>
+        </div>
+      </div>
+
+      <!-- Dossier Grid -->
+      <div id="planets-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Planet Cards dynamically injected via JS -->
+      </div>
+    </section>
+
+    <!-- Modul 3: Interaktive Entdecker-Tools (Physik-Labor) -->
+    <section id="tools" class="scroll-mt-24 space-y-8">
+      <div>
+        <div class="text-xs font-mono uppercase tracking-wider text-cyan-400">Modul 3 · Interaktive Denk- & Rechenwerkstatt</div>
+        <h2 class="text-2xl sm:text-3xl font-display font-bold text-white">Physikalisches Hands-on Labor</h2>
+        <p class="text-slate-400 text-sm mt-1">Experimentiere mit Schwerkraft, orbitalen Zyklen und menschlichen Massstäben.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        
+        <!-- Tool 1: Gravitations- & Gewichtsrechner -->
+        <div class="glass-panel p-6 sm:p-7 rounded-2xl border border-cyan-900/30 flex flex-col justify-between space-y-6">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-lg font-display font-bold text-white flex items-center gap-2">
+                <span class="text-xl">⚖️</span> Gravitation & Gewichtskraft
+              </h3>
+              <span class="text-xs font-mono bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-2 py-0.5 rounded">NT.8.3 Grundkonzept</span>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Deine <strong>Masse</strong> in Kilogramm bleibt überall im Universum identisch. Doch dein <strong>Gewicht (Gewichtskraft in Newton bzw. Waage-Anzeige)</strong> hängt von der Anziehungskraft des jeweiligen Himmelskörpers ab!
+            </p>
+
+            <div class="mt-5 space-y-4">
+              <label class="block text-xs font-mono uppercase tracking-wider text-slate-400">
+                Dein Erd-Körpergewicht (kg):
+              </label>
+              <div class="flex items-center gap-4">
+                <input id="user-weight-input" type="number" min="20" max="180" value="50" class="w-32 bg-space-900 border border-cyan-500/40 rounded-xl px-4 py-2.5 text-lg font-bold text-white focus:outline-none focus:ring-2 focus:ring-cyan-400">
+                <span class="text-sm text-slate-400">kg auf der Erde</span>
+              </div>
+
+              <!-- Quick Selection Buttons -->
+              <div class="flex flex-wrap gap-2 text-xs">
+                <button onclick="setWeightPreset(40)" class="px-2.5 py-1 bg-space-900 hover:bg-space-800 rounded border border-slate-800 text-slate-300">40 kg (7. Klasse)</button>
+                <button onclick="setWeightPreset(55)" class="px-2.5 py-1 bg-space-900 hover:bg-space-800 rounded border border-slate-800 text-slate-300">55 kg (8. Klasse)</button>
+                <button onclick="setWeightPreset(70)" class="px-2.5 py-1 bg-space-900 hover:bg-space-800 rounded border border-slate-800 text-slate-300">70 kg (Erwachsen)</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dynamic Results Container -->
+          <div class="bg-space-900/90 rounded-xl p-4 border border-slate-800/80 space-y-3">
+            <div class="text-xs font-mono uppercase text-slate-400">Berechnete Werte (Waagen-Äquivalent):</div>
+            <div id="gravity-results" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <div class="text-xs bg-amber-500/10 border border-amber-500/20 text-amber-200/90 p-3 rounded-xl">
+            💡 <strong>Erkenntnis:</strong> Auf Jupiter wärst du mehr als doppelt so schwer – deine Knochen müssten enorme Last tragen! Auf dem Mond fühlst du dich wie eine Feder (nur 1/6 der Erdanziehung).
+          </div>
+        </div>
+
+        <!-- Tool 2: Planeten-Geburtstagsrechner -->
+        <div class="glass-panel p-6 sm:p-7 rounded-2xl border border-cyan-900/30 flex flex-col justify-between space-y-6">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-lg font-display font-bold text-white flex items-center gap-2">
+                <span class="text-xl">🎂</span> Kosmischer Geburtstagsrechner
+              </h3>
+              <span class="text-xs font-mono bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-2 py-0.5 rounded">Umlaufzeiten</span>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Ein „Jahr“ ist schlicht die Zeitspanne für einen vollen Umlauf um die Sonne. Weil Planeten unterschiedlich weit entfernt sind und andere Geschwindigkeiten haben, vergeht dein „Alter“ völlig verschieden!
+            </p>
+
+            <div class="mt-5 space-y-4">
+              <label class="block text-xs font-mono uppercase tracking-wider text-slate-400">
+                Dein Alter auf der Erde (Jahre):
+              </label>
+              <div class="flex items-center gap-4">
+                <input id="user-age-input" type="number" min="5" max="100" value="14" class="w-32 bg-space-900 border border-cyan-500/40 rounded-xl px-4 py-2.5 text-lg font-bold text-white focus:outline-none focus:ring-2 focus:ring-cyan-400">
+                <span class="text-sm text-slate-400">Erdenjahre alt</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dynamic Age Display -->
+          <div class="bg-space-900/90 rounded-xl p-4 border border-slate-800/80 space-y-3">
+            <div class="text-xs font-mono uppercase text-slate-400">So alt wärst du auf anderen Planeten:</div>
+            <div id="age-results" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <div class="text-xs bg-cyan-500/10 border border-cyan-500/20 text-cyan-200/90 p-3 rounded-xl">
+            🪐 <strong>Kurios:</strong> Auf dem Neptun hättest du noch nicht mal deinen 1. Geburtstag gefeiert (Neptunjahr = 165 Erdenjahre)! Auf Merkur wärst du bereits über 50 Jahre alt.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Tool 3: Das Murmel-Modell (Kompakter Massstabs-Rechner) -->
+      <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-indigo-500/30 bg-gradient-to-br from-space-900 via-space-850 to-indigo-950/40">
+        <div class="max-w-3xl space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 text-xs font-mono">
+            Modellkritik & Räumliche Vorstellungskraft
+          </div>
+          <h3 class="text-2xl font-display font-bold text-white">Das „Erde-als-Murmel“-Experiment</h3>
+          <p class="text-sm sm:text-base text-slate-300 leading-relaxed">
+            In Zeichnungen sieht das Sonnensystem kuschelig und gedrängt aus. Doch die Natur ist fast unvorstellbar weitläufig. Stell dir vor, wir schrumpfen die **Erde auf die Grösse einer kleinen Glasmurmel von exakt 1 cm Durchmesser**:
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-3">
+            <div class="p-4 bg-space-950/80 rounded-2xl border border-slate-800">
+              <div class="text-xs font-mono text-amber-400 font-bold uppercase">1. Die Sonne</div>
+              <div class="text-2xl font-bold font-display text-white mt-1">Ø ca. 1.09 Meter</div>
+              <div class="text-xs text-slate-400 mt-1">So gross wie ein grosser Gymnastik- oder Pezziball!</div>
+            </div>
+
+            <div class="p-4 bg-space-950/80 rounded-2xl border border-slate-800">
+              <div class="text-xs font-mono text-cyan-400 font-bold uppercase">2. Distanz Sonne – Erde</div>
+              <div class="text-2xl font-bold font-display text-white mt-1">117 Meter weit weg!</div>
+              <div class="text-xs text-slate-400 mt-1">Die 1-cm-Murmel liegt über ein ganzes Fussballfeld entfernt.</div>
+            </div>
+
+            <div class="p-4 bg-space-950/80 rounded-2xl border border-slate-800">
+              <div class="text-xs font-mono text-indigo-400 font-bold uppercase">3. Neptun (Aussenrand)</div>
+              <div class="text-2xl font-bold font-display text-white mt-1">3.5 Kilometer weit!</div>
+              <div class="text-xs text-slate-400 mt-1">Ein kleiner Kiesel im Nachbardorf des Pezziballs. Dazwischen: Nur Leere.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Modul 4: LP 21 Kompetenz-Check (Interaktives Quiz) -->
+    <section id="quiz" class="scroll-mt-24 space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+        <div>
+          <div class="text-xs font-mono uppercase tracking-wider text-emerald-400">Modul 4 · Lernerfolgskontrolle</div>
+          <h2 class="text-2xl sm:text-3xl font-display font-bold text-white">LP 21 Kompetenz-Check (Quiz)</h2>
+          <p class="text-slate-400 text-sm mt-1">Teste dein Verständnis zu Planetenaufbau, Gravitation und astronomischen Phänomenen.</p>
+        </div>
+        <div class="flex items-center gap-2 bg-space-900 border border-slate-800 px-3 py-1.5 rounded-xl text-xs font-mono text-cyan-300">
+          <span>Frage <span id="quiz-current-idx">1</span> von <span id="quiz-total-count">7</span></span>
+        </div>
+      </div>
+
+      <!-- Quiz Card Container -->
+      <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-emerald-500/30 max-w-3xl mx-auto shadow-2xl relative">
+        
+        <!-- Score Bar -->
+        <div class="w-full bg-space-950 h-2 rounded-full overflow-hidden mb-6 border border-slate-800">
+          <div id="quiz-progress-bar" class="h-full bg-gradient-to-r from-cyan-500 to-emerald-400 transition-all duration-300" style="width: 14%;"></div>
+        </div>
+
+        <!-- Quiz Question Area -->
+        <div id="quiz-active-box" class="space-y-6">
+          <div class="space-y-1">
+            <span id="quiz-competence-badge" class="inline-block text-[11px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+              LP 21: NT.8.3 Phänomene des Sonnensystems
+            </span>
+            <h3 id="quiz-question-text" class="text-lg sm:text-xl font-display font-bold text-white pt-2">
+              Lade Frage...
+            </h3>
+          </div>
+
+          <!-- Answer Options -->
+          <div id="quiz-options-container" class="space-y-3">
+            <!-- Buttons injected via JS -->
+          </div>
+
+          <!-- Feedback Box -->
+          <div id="quiz-feedback" class="hidden p-4 rounded-2xl text-xs sm:text-sm border leading-relaxed">
+            <!-- Feedback content -->
+          </div>
+
+          <div class="flex justify-end pt-3">
+            <button id="btn-next-question" disabled class="px-5 py-2.5 rounded-xl bg-slate-800 text-slate-500 font-semibold text-sm cursor-not-allowed transition">
+              Nächste Frage &rarr;
+            </button>
+          </div>
+        </div>
+
+        <!-- Quiz Summary Box (Hidden by default) -->
+        <div id="quiz-summary-box" class="hidden space-y-6 text-center py-6">
+          <div class="w-20 h-20 mx-auto rounded-full bg-emerald-500/20 border-2 border-emerald-400 flex items-center justify-center text-3xl shadow-xl">
+            🏆
+          </div>
+          <div class="space-y-2">
+            <h3 class="text-2xl font-display font-bold text-white">Kompetenz-Check abgeschlossen!</h3>
+            <p class="text-sm text-slate-300">Du hast <span id="quiz-final-score" class="font-bold text-emerald-400 text-lg">0</span> von <span id="quiz-final-total" class="font-bold text-white text-lg">7</span> Fragen richtig beantwortet.</p>
+          </div>
+
+          <!-- Evaluation Tier -->
+          <div id="quiz-tier-badge" class="p-4 rounded-2xl max-w-md mx-auto text-sm text-left">
+            <!-- Evaluated via JS -->
+          </div>
+
+          <button onclick="restartQuiz()" class="px-6 py-3 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl font-semibold text-sm transition shadow-lg shadow-cyan-600/30">
+            Quiz wiederholen
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-24 border-t border-slate-800 bg-space-950 py-10 text-center text-xs text-slate-500 font-mono">
+    <div class="max-w-7xl mx-auto px-4 space-y-2">
+      <p class="text-slate-400">Konzipiert für Schweizer Sekundarschulen (Zyklus 3) · Fachbereiche NT & RZG (Lehrplan 21)</p>
+      <p>Astronomische Daten basieren auf NASA Planetary Fact Sheet & Schweizer Astronomische Gesellschaft.</p>
+    </div>
+  </footer>
+
+  <script>
+    /* =========================================================================
+       1. DATA STRUCTURES (ASTRONOMICAL DATA & LP 21 SPECIFICATIONS)
+       ========================================================================= */
+    const PLANETS_DATA = [
+      {
+        id: 'mercury',
+        name: 'Merkur',
+        order: 1,
+        type: 'rocky',
+        typeLabel: 'Gesteinsplanet',
+        color: '#a3a3a3',
+        orbitColor: '#52525b',
+        distMioKm: 57.9,
+        distAU: 0.39,
+        diameterKm: 4879,
+        relEarthDiam: 0.38,
+        relEarthMass: 0.055,
+        gravityFactor: 0.38, // 38% of Earth gravity
+        orbitalPeriodYears: 0.24, // 88 Earth days
+        orbitalPeriodDays: 88,
+        rotationPeriodHours: 1407.6, // 58.6 Earth days
+        tempRange: '-180 °C bis +430 °C',
+        moons: 0,
+        atmosphere: 'Extrem dünn (Spuren von He, Na, O), praktisch Vakuum',
+        fact: 'Merkur ist kaum grösser als unser Mond und besitzt keinen nennenswerten Schutzschild gegen Meteoriten.',
+        researchQuestion: 'Warum hat Merkur trotz extremer Sonnen-Nähe Eis in manchen Kratern?',
+        researchAnswer: 'Weil Merkurs Rotationsachse fast senkrecht steht, erreichen Sonnenstrahlen niemals die tiefen Kraterböden an seinen Polen. Dort herrscht ewige Kälte (bis -200 °C), wodurch eisige Reste von Kometeneinschlägen Jahrmillionen überdauern.'
+      },
+      {
+        id: 'venus',
+        name: 'Venus',
+        order: 2,
+        type: 'rocky',
+        typeLabel: 'Gesteinsplanet',
+        color: '#eab308',
+        orbitColor: '#854d0e',
+        distMioKm: 108.2,
+        distAU: 0.72,
+        diameterKm: 12104,
+        relEarthDiam: 0.95,
+        relEarthMass: 0.815,
+        gravityFactor: 0.91,
+        orbitalPeriodYears: 0.62,
+        orbitalPeriodDays: 224.7,
+        rotationPeriodHours: -5832, // Retrograde rotation
+        tempRange: 'Konstant ca. +465 °C',
+        moons: 0,
+        atmosphere: 'Extrem dicht: 96.5% CO₂, Schwefelsäurewolken, 92 bar Druck',
+        fact: 'Die Venus rotiert „rückwärts“ (retrograd) im Vergleich zu fast allen anderen Planeten.',
+        researchQuestion: 'Warum ist die Venus heisser als Merkur, obwohl sie fast doppelt so weit von der Sonne entfernt ist?',
+        researchAnswer: 'Schuld ist der extreme Treibhauseffekt: Ihre gigantische Kohlendioxid-Atmosphäre fängt die Wärmestrahlung komplett ein. Mit 465 °C schmilzt auf ihrer Oberfläche sogar Blei!'
+      },
+      {
+        id: 'earth',
+        name: 'Erde',
+        order: 3,
+        type: 'rocky',
+        typeLabel: 'Gesteinsplanet (Heimat)',
+        color: '#38bdf8',
+        orbitColor: '#0284c7',
+        distMioKm: 149.6,
+        distAU: 1.0,
+        diameterKm: 12742,
+        relEarthDiam: 1.0,
+        relEarthMass: 1.0,
+        gravityFactor: 1.0,
+        orbitalPeriodYears: 1.0,
+        orbitalPeriodDays: 365.25,
+        rotationPeriodHours: 23.93,
+        tempRange: '-89 °C bis +57 °C (Mittel: +15 °C)',
+        moons: 1,
+        atmosphere: '78% Stickstoff, 21% Sauerstoff, 1% Argon/Spurengase',
+        fact: 'Der einzige bisher bekannte Himmelskörper mit stabil flüssigem Oberflächenwasser und biologischem Leben.',
+        researchQuestion: 'Warum entstehen Jahreszeiten auf der Erde?',
+        researchAnswer: 'Nicht wegen der Sonnenentfernung, sondern wegen der Achsenneigung (23.5°)! Im Nordsommer ist die Nordhalbkugel der Sonne zugeneigt, wodurch das Sonnenlicht steiler und länger pro Tag einstrahlt.'
+      },
+      {
+        id: 'mars',
+        name: 'Mars',
+        order: 4,
+        type: 'rocky',
+        typeLabel: 'Gesteinsplanet',
+        color: '#ef4444',
+        orbitColor: '#991b1b',
+        distMioKm: 227.9,
+        distAU: 1.52,
+        diameterKm: 6779,
+        relEarthDiam: 0.53,
+        relEarthMass: 0.107,
+        gravityFactor: 0.38,
+        orbitalPeriodYears: 1.88,
+        orbitalPeriodDays: 687,
+        rotationPeriodHours: 24.62,
+        tempRange: '-133 °C bis +27 °C',
+        moons: 2, // Phobos & Deimos
+        atmosphere: 'Dünn: 95% CO₂, 2.6% N₂, 0.13% O₂ (nur 0.006 bar Druck)',
+        fact: 'Beherbergt den Olympus Mons, den mit 22 km Höhe grössten bekannten Vulkan im ganzen Sonnensystem.',
+        researchQuestion: 'Warum ist der Mars rot und warum kann er kein flüssiges Wasser auf der Oberfläche halten?',
+        researchAnswer: 'Die rote Farbe rührt von verrostetem Eisenstaub (Eisenoxid). Wasser verdampft oder gefriert sofort, weil der atmosphärische Luftdruck unter 6 Millibar liegt (Tripelpunkt des Wassers unterschritten).'
+      },
+      {
+        id: 'jupiter',
+        name: 'Jupiter',
+        order: 5,
+        type: 'gas',
+        typeLabel: 'Gasriese',
+        color: '#f97316',
+        orbitColor: '#c2410c',
+        distMioKm: 778.6,
+        distAU: 5.2,
+        diameterKm: 139820,
+        relEarthDiam: 11.2,
+        relEarthMass: 317.8,
+        gravityFactor: 2.53,
+        orbitalPeriodYears: 11.86,
+        orbitalPeriodDays: 4333,
+        rotationPeriodHours: 9.93,
+        tempRange: '-110 °C (in oberen Wolken)',
+        moons: 95, // u.a. Ganymed, Europa
+        atmosphere: '89% Wasserstoff (H₂), 10% Helium (He), Methan',
+        fact: 'Jupiter ist mehr als doppelt so massereich wie alle anderen 7 Planeten zusammen!',
+        researchQuestion: 'Was ist der „Grosse Rote Fleck“ auf Jupiter?',
+        researchAnswer: 'Ein kolossaler Hochdrucksturm, der mindestens seit 350 Jahren ununterbrochen tobt und so gewaltig ist, dass die gesamte Erdkugel mehr als einmal darin Platz hätte.'
+      },
+      {
+        id: 'saturn',
+        name: 'Saturn',
+        order: 6,
+        type: 'gas',
+        typeLabel: 'Gasriese mit Ringsystem',
+        color: '#fde047',
+        orbitColor: '#ca8a04',
+        distMioKm: 1433.5,
+        distAU: 9.58,
+        diameterKm: 116460,
+        relEarthDiam: 9.45,
+        relEarthMass: 95.2,
+        gravityFactor: 1.07,
+        orbitalPeriodYears: 29.45,
+        orbitalPeriodDays: 10759,
+        rotationPeriodHours: 10.7,
+        tempRange: '-140 °C',
+        moons: 146, // u.a. Titan, Enceladus
+        atmosphere: '96% Wasserstoff, 3% Helium, Ammoniak-Kristalle',
+        fact: 'Saturn hat die geringste Dichte aller Planeten (0.69 g/cm³) – in einer gigantischen Badewanne würde er schwimmen!',
+        researchQuestion: 'Woraus bestehen die berühmten Ringe des Saturns?',
+        researchAnswer: 'Sie bestehen zu 99% aus Milliarden von Wassereis-Brocken und staubbedeckten Steinen – von Millimeter-Körnchen bis zu hausgrossen Brocken, die vermutlich aus einem zerrissenen Eismond stammen.'
+      },
+      {
+        id: 'uranus',
+        name: 'Uranus',
+        order: 7,
+        type: 'gas',
+        typeLabel: 'Eisriese',
+        color: '#67e8f9',
+        orbitColor: '#0891b2',
+        distMioKm: 2872.5,
+        distAU: 19.2,
+        diameterKm: 50724,
+        relEarthDiam: 4.01,
+        relEarthMass: 14.5,
+        gravityFactor: 0.89,
+        orbitalPeriodYears: 84.0,
+        orbitalPeriodDays: 30687,
+        rotationPeriodHours: -17.2,
+        tempRange: '-224 °C (kältester Planet)',
+        moons: 28,
+        atmosphere: '82% H₂, 15% He, 2.3% Methan (verleiht die türkisblaue Farbe)',
+        fact: 'Uranus rollt wie eine Tonne auf seiner Bahn: Seine Rotationsachse ist um extreme 98 Grad gekippt!',
+        researchQuestion: 'Warum wird Uranus als „Eisriese“ bezeichnet und nicht als reiner Gasriese?',
+        researchAnswer: 'Im Unterschied zu Jupiter und Saturn besteht sein Mantel überwiegend aus heissen, extrem dichten „flüssigen Eisen“ (Wasser, Ammoniak, Methan) über einem festen Silikat-Eisen-Kern.'
+      },
+      {
+        id: 'neptune',
+        name: 'Neptun',
+        order: 8,
+        type: 'gas',
+        typeLabel: 'Eisriese',
+        color: '#3b82f6',
+        orbitColor: '#1d4ed8',
+        distMioKm: 4495.1,
+        distAU: 30.05,
+        diameterKm: 49244,
+        relEarthDiam: 3.88,
+        relEarthMass: 17.1,
+        gravityFactor: 1.14,
+        orbitalPeriodYears: 164.8,
+        orbitalPeriodDays: 60190,
+        rotationPeriodHours: 16.1,
+        tempRange: '-218 °C',
+        moons: 16, // u.a. Triton
+        atmosphere: '80% H₂, 19% He, 1.5% Methan, Spuren von Ethan',
+        fact: 'Auf Neptun wurden die schnellsten Winde des Sonnensystems mit über 2\'100 km/h gemessen.',
+        researchQuestion: 'Wie wurde Neptun entdeckt?',
+        researchAnswer: 'Neptun wurde 1846 zuerst rein mathematisch mit Papier und Bleistift berechnet! Astronomen bemerkten Bahnabweichungen von Uranus und schlossen präzise auf die Schwerkraft eines noch unentdeckten Planeten.'
+      },
+      {
+        id: 'pluto',
+        name: 'Pluto',
+        order: 9,
+        type: 'dwarf',
+        typeLabel: 'Zwergplanet (Kuipergürtel)',
+        color: '#cbd5e1',
+        orbitColor: '#475569',
+        distMioKm: 5906.4,
+        distAU: 39.5,
+        diameterKm: 2376,
+        relEarthDiam: 0.18,
+        relEarthMass: 0.002,
+        gravityFactor: 0.06,
+        orbitalPeriodYears: 247.9,
+        orbitalPeriodDays: 90560,
+        rotationPeriodHours: -153.3,
+        tempRange: '-230 °C',
+        moons: 5, // Charon etc.
+        atmosphere: 'Hauchdünner Stickstoff, gefriert zeitweise komplett aus',
+        fact: 'Wurde 2006 von der Internationalen Astronomischen Union zum Zwergplaneten zurückgestuft.',
+        researchQuestion: 'Warum verlor Pluto seinen Status als 9. Vollplanet?',
+        researchAnswer: 'Nach der IAU-Definition von 2006 muss ein Planet: 1. Die Sonne umkreisen, 2. Durch Eigengravitation rund sein, und 3. Seine Umlaufbahn von anderen Körpern bereinigt haben. Pluto teilt seinen Orbit mit tausenden Objekten des Kuipergürtels.'
+      }
+    ];
+
+    /* =========================================================================
+       2. LP 21 QUIZ QUESTIONS
+       ========================================================================= */
+    const QUIZ_QUESTIONS = [
+      {
+        competence: 'NT.8.3: Aufbau & Eigenschaften der Planeten',
+        question: 'Worin unterscheiden sich die inneren vier Planeten grundlegend von den äusseren vier Planeten?',
+        options: [
+          'Die inneren Planeten bestehen vor allem aus Gestein und Metallen, die äusseren überwiegend aus Gasen und flüssigen Eis-Verbindungen.',
+          'Die inneren Planeten haben viel mehr Monde als die äusseren Planeten.',
+          'Die inneren Planeten bewegen sich viel langsamer um die Sonne als die äusseren Planeten.',
+          'Die inneren Planeten besitzen alle ein mächtiges Ringsystem aus Eiskristallen.'
+        ],
+        correct: 0,
+        explanation: 'Richtig! Merkur, Venus, Erde und Mars sind Gesteinsplaneten (erdähnlich). Jupiter, Saturn, Uranus und Neptun sind Gas- bzw. Eisriesen mit gewaltiger Masse und ohne feste begehbare Oberfläche.'
+      },
+      {
+        competence: 'RZG.4.1 / NT.8.3: Phänomene & Ursachen',
+        question: 'Warum ist es im Schweizer Sommer wärmer als im Winter?',
+        options: [
+          'Weil die Erde im Sommer der Sonne viel näher steht als im Winter.',
+          'Weil die Erdachse geneigt ist und die Nordhalbkugel im Sommer mehr und steileres Sonnenlicht empfängt.',
+          'Weil die Sonne im Sommer mehr Sonnenflecken und energiereichere Explosionen erzeugt.',
+          'Weil die Ozonschicht im Juli dünner ist und mehr Wärme durchlässt.'
+        ],
+        correct: 1,
+        explanation: 'Exakt! Die Neigung der Erdachse (23.5°) bewirkt, dass der Einstrahlwinkel der Sonne variiert. Im Nordsommer treffen die Sonnenstrahlen steiler auf und die Tage sind länger. (Tatsächlich ist die Erde im Januar der Sonne sogar etwas näher!).'
+      },
+      {
+        competence: 'NT.8.3: Gravitation und Bewegung',
+        question: 'Was würde mit den Planeten passieren, wenn die Gravitationskraft der Sonne plötzlich erlöschen würde?',
+        options: [
+          'Sie würden sofort zur Mitte stürzen und kollidieren.',
+          'Sie würden tangential geradlinig in den leeren Weltraum hinausfliegen (Trägheitsprinzip).',
+          'Sie würden regungslos an Ort und Stelle stehen bleiben.',
+          'Sie würden spiralförmig nach innen wirbeln.'
+        ],
+        correct: 1,
+        explanation: 'Korrekt nach Newton! Eine Umlaufbahn ist ein ständiges Gleichgewicht zwischen Vorwärts-Bewegung (Trägheit) und Anziehungskraft (Gravitation). Fällt die Schwerkraft weg, fliegen Körper geradlinig mit konstanter Geschwindigkeit weiter.'
+      },
+      {
+        competence: 'NT.8.3: Massen- und Grössenverhältnisse',
+        question: 'Auf welchem Himmelskörper würdest du das höchste Gewicht auf einer Personenwaage anzeigen?',
+        options: [
+          'Auf dem Mars',
+          'Auf der Venus',
+          'Auf dem Jupiter',
+          'Auf dem Mond'
+        ],
+        correct: 2,
+        explanation: 'Ganz genau! Jupiter besitzt mit Abstand die grösste Masse im Sonnensystem. Seine Oberflächenbeschleunigung beträgt ca. 2.53 g – eine 50 kg schwere Person würde dort rechnerisch ca. 126 kg auf die Waage drücken.'
+      },
+      {
+        competence: 'NT.8.3: Atmosphären & Physik',
+        question: 'Warum besitzt Merkur im Gegensatz zur Erde fast gar keine Atmosphäre?',
+        options: [
+          'Weil die Gravitation von Merkur zu schwach ist und der Sonnenwind die Gase kontinuierlich weggeweht hat.',
+          'Weil Merkurs Gase alle im flüssigen Ozean gelöst sind.',
+          'Weil es auf Merkur zu kalt ist, sodass alle Gase gefroren am Boden liegen.',
+          'Weil Merkur von einem gigantischen Vakuum-Ring umschlossen wird.'
+        ],
+        correct: 0,
+        explanation: 'Stimmt! Durch Merkurs geringe Masse (nur 5.5% der Erde) ist seine Fluchtgeschwindigkeit gering. Die enorme Hitze beschleunigt Gasmoleküle so stark, dass sie zusammen mit dem intensiven Sonnenwind ins All entweichen.'
+      },
+      {
+        competence: 'RZG.4.1 / NT.8.3: Modellkritik & Distanzen',
+        question: 'Was ist das Problem an den typischen Darstellungen des Sonnensystems in Schulbüchern?',
+        options: [
+          'Die Farben der Planeten sind in der Realität alle komplett identisch.',
+          'Grössen und Abstände können nicht im selben Massstab gedruckt werden – sonst wären Planeten unsichtbare Pünktchen in kilometerweiter Leere.',
+          'Die Planeten laufen in der Wirklichkeit auf quadratischen Bahnen.',
+          'Die Sonne befindet sich gar nicht im Zentrum.'
+        ],
+        correct: 1,
+        explanation: 'Treffer! Im wahren Massstab ist das Sonnensystem fast ausschliesslich leerer Raum. Wollte man die Distanz von der Erde zur Sonne auf einer Buchseite massstabsgetreu zeigen, wäre die Erde kleiner als ein Mikroskop-Partikel.'
+      },
+      {
+        competence: 'NT.8.3: Zwergplaneten & Klassifikation',
+        question: 'Warum gilt Pluto seit 2006 astronomisch nicht mehr als 9. Vollplanet?',
+        options: [
+          'Weil er aus seiner Bahn geworfen wurde und nun den Saturn umkreist.',
+          'Weil er seine Umlaufbahn nicht von anderen eisigen Asteroiden des Kuipergürtels freigeräumt hat.',
+          'Weil er keine Kugelform besitzt, sondern völlig unförmig wie eine Kartoffel ist.',
+          'Weil er keine eigene Umlaufbahn um die Sonne hat.'
+        ],
+        correct: 1,
+        explanation: 'Ausgezeichnet! Pluto ist zwar rund und umkreist die Sonne, aber er teilt sich seine Bahnregion mit unzähligen Himmelskörpern des Kuipergürtels. Daher stufte ihn die Internationale Astronomische Union (IAU) als Zwergplaneten ein.'
+      }
+    ];
+
+    /* =========================================================================
+       3. INTERACTIVE CANVAS ORRERY SIMULATION
+       ========================================================================= */
+    const canvas = document.getElementById('orrery-canvas');
+    const ctx = canvas.getContext('2d');
+    let animationId = null;
+    let isRunning = true;
+    let simSpeed = 1.0;
+    let isScaleMode = false;
+    let selectedBodyId = 'earth';
+    let simTime = 0;
+
+    // Viewport transforms for zoom & pan
+    let zoomLevel = 1.0;
+    let panX = 0;
+    let panY = 0;
+    let isDragging = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+
+    // Relative visual orbits (didactic compression so everything fits comfortably)
+    const DIDACTIC_ORBITS = [
+      { id: 'mercury', radius: 46,  speed: 4.15, size: 4,   color: '#a3a3a3', ring: false },
+      { id: 'venus',   radius: 72,  speed: 1.62, size: 7,   color: '#eab308', ring: false },
+      { id: 'earth',   radius: 104, speed: 1.00, size: 7.5, color: '#38bdf8', ring: false },
+      { id: 'mars',    radius: 138, speed: 0.53, size: 5.5, color: '#ef4444', ring: false },
+      { id: 'jupiter', radius: 185, speed: 0.084, size: 14, color: '#f97316', ring: false },
+      { id: 'saturn',  radius: 235, speed: 0.034, size: 11, color: '#fde047', ring: true, ringR: 19 },
+      { id: 'uranus',  radius: 285, speed: 0.012, size: 9,  color: '#67e8f9', ring: false },
+      { id: 'neptune', radius: 330, speed: 0.006, size: 8.5, color: '#3b82f6', ring: false },
+      { id: 'pluto',   radius: 365, speed: 0.004, size: 3.5, color: '#cbd5e1', ring: false }
+    ];
+
+    // Background stars cache
+    let stars = [];
+    function initStars() {
+      stars = [];
+      for (let i = 0; i < 180; i++) {
+        stars.push({
+          x: (Math.random() - 0.5) * 2000,
+          y: (Math.random() - 0.5) * 2000,
+          size: Math.random() * 1.5 + 0.5,
+          alpha: Math.random() * 0.7 + 0.3
+        });
+      }
+    }
+
+    function resizeCanvas() {
+      const rect = canvas.parentElement.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+    }
+
+    function renderSimulation() {
+      const width = canvas.width / (window.devicePixelRatio || 1);
+      const height = canvas.height / (window.devicePixelRatio || 1);
+      const centerX = width / 2 + panX;
+      const centerY = height / 2 + panY;
+
+      ctx.clearRect(0, 0, width, height);
+
+      // Save context for transform
+      ctx.save();
+      ctx.translate(centerX, centerY);
+      ctx.scale(zoomLevel, zoomLevel);
+
+      // Draw faint background stars
+      ctx.fillStyle = '#ffffff';
+      stars.forEach(st => {
+        ctx.globalAlpha = st.alpha * 0.75;
+        ctx.beginPath();
+        ctx.arc(st.x, st.y, st.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.globalAlpha = 1.0;
+
+      // Draw Sun
+      const sunGradient = ctx.createRadialGradient(0, 0, 4, 0, 0, 24);
+      sunGradient.addColorStop(0, '#ffffff');
+      sunGradient.addColorStop(0.3, '#fde047');
+      sunGradient.addColorStop(0.8, '#f59e0b');
+      sunGradient.addColorStop(1, 'rgba(245, 158, 11, 0)');
+
+      // Glow behind Sun
+      ctx.beginPath();
+      ctx.arc(0, 0, 26, 0, Math.PI * 2);
+      ctx.fillStyle = sunGradient;
+      ctx.fill();
+
+      // Core Sun
+      ctx.beginPath();
+      ctx.arc(0, 0, isScaleMode ? 10 : 15, 0, Math.PI * 2);
+      ctx.fillStyle = '#fbbf24';
+      ctx.shadowColor = '#f59e0b';
+      ctx.shadowBlur = 20;
+      ctx.fill();
+      ctx.shadowBlur = 0; // reset
+
+      // Sun label
+      ctx.font = '10px Inter, sans-serif';
+      ctx.fillStyle = '#fef08a';
+      ctx.textAlign = 'center';
+      ctx.fillText('Sonne', 0, isScaleMode ? 20 : 25);
+
+      // Draw Orbits and Planetes
+      DIDACTIC_ORBITS.forEach(body => {
+        // Calculate radius based on mode
+        let currentRadius = body.radius;
+        if (isScaleMode) {
+          // Find matching planet AU
+          const pl = PLANETS_DATA.find(p => p.id === body.id);
+          const au = pl ? pl.distAU : 1;
+          // Scale: 1 AU = 45px
+          currentRadius = au * 42;
+        }
+
+        // Draw Orbit Path
+        ctx.beginPath();
+        ctx.arc(0, 0, currentRadius, 0, Math.PI * 2);
+        ctx.strokeStyle = body.id === selectedBodyId ? 'rgba(56, 189, 248, 0.45)' : 'rgba(255, 255, 255, 0.08)';
+        ctx.lineWidth = body.id === selectedBodyId ? 1.5 : 1;
+        ctx.stroke();
+
+        // Calculate Position
+        const angle = simTime * body.speed;
+        const px = Math.cos(angle) * currentRadius;
+        const py = Math.sin(angle) * currentRadius;
+
+        // Selection Marker Ring
+        if (body.id === selectedBodyId) {
+          ctx.beginPath();
+          ctx.arc(px, py, body.size + 6, 0, Math.PI * 2);
+          ctx.strokeStyle = '#38bdf8';
+          ctx.lineWidth = 1.5;
+          ctx.setLineDash([3, 3]);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+
+        // Draw Rings for Saturn
+        if (body.ring) {
+          ctx.save();
+          ctx.translate(px, py);
+          ctx.rotate(0.35);
+          ctx.beginPath();
+          ctx.ellipse(0, 0, body.ringR, body.ringR * 0.35, 0, 0, Math.PI * 2);
+          ctx.strokeStyle = 'rgba(253, 224, 71, 0.7)';
+          ctx.lineWidth = 3;
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        // Draw Planet Body
+        ctx.beginPath();
+        ctx.arc(px, py, isScaleMode ? Math.max(body.size * 0.6, 2.5) : body.size, 0, Math.PI * 2);
+        ctx.fillStyle = body.color;
+        ctx.fill();
+
+        // Draw Label
+        ctx.font = '10px Inter, sans-serif';
+        ctx.fillStyle = body.id === selectedBodyId ? '#38bdf8' : '#cbd5e1';
+        ctx.textAlign = 'center';
+        ctx.fillText(PLANETS_DATA.find(p => p.id === body.id)?.name || '', px, py - body.size - 4);
+      });
+
+      // Asteroid belt simulation dots between Mars and Jupiter
+      const asteroidInnerR = isScaleMode ? 1.52 * 42 + 10 : 148;
+      const asteroidOuterR = isScaleMode ? 5.20 * 42 - 15 : 172;
+      ctx.fillStyle = 'rgba(203, 213, 225, 0.25)';
+      for (let i = 0; i < 45; i++) {
+        const astAngle = (i * 0.14) + (simTime * 0.05);
+        const astDist = asteroidInnerR + (i % 5) * ((asteroidOuterR - asteroidInnerR) / 5);
+        const ax = Math.cos(astAngle) * astDist;
+        const ay = Math.sin(astAngle) * astDist;
+        ctx.fillRect(ax, ay, 1.2, 1.2);
+      }
+
+      ctx.restore();
+
+      // Advance Time
+      if (isRunning) {
+        simTime += 0.007 * simSpeed;
+      }
+
+      animationId = requestAnimationFrame(renderSimulation);
+    }
+
+    // Click handling on Canvas to select body
+    canvas.addEventListener('click', function(e) {
+      if (isDragging) return;
+      const rect = canvas.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
+      
+      const width = canvas.width / (window.devicePixelRatio || 1);
+      const height = canvas.height / (window.devicePixelRatio || 1);
+      const centerX = width / 2 + panX;
+      const centerY = height / 2 + panY;
+
+      // Transform click to world coordinates
+      const worldX = (clickX - centerX) / zoomLevel;
+      const worldY = (clickY - centerY) / zoomLevel;
+
+      let found = null;
+      let minDistance = 22; // click radius tolerance
+
+      DIDACTIC_ORBITS.forEach(body => {
+        let currentRadius = body.radius;
+        if (isScaleMode) {
+          const pl = PLANETS_DATA.find(p => p.id === body.id);
+          currentRadius = (pl ? pl.distAU : 1) * 42;
+        }
+        const angle = simTime * body.speed;
+        const px = Math.cos(angle) * currentRadius;
+        const py = Math.sin(angle) * currentRadius;
+
+        const dist = Math.hypot(worldX - px, worldY - py);
+        if (dist < minDistance) {
+          minDistance = dist;
+          found = body.id;
+        }
+      });
+
+      if (found) {
+        selectPlanet(found);
+      }
+    });
+
+    // Zoom handling (Wheel)
+    canvas.addEventListener('wheel', function(e) {
+      e.preventDefault();
+      const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
+      zoomLevel = Math.min(Math.max(zoomLevel * zoomFactor, 0.35), 3.5);
+    }, { passive: false });
+
+    // Drag / Pan handling
+    canvas.addEventListener('mousedown', function(e) {
+      isDragging = false;
+      dragStartX = e.clientX - panX;
+      dragStartY = e.clientY - panY;
+      
+      function onMouseMove(moveEvent) {
+        isDragging = true;
+        panX = moveEvent.clientX - dragStartX;
+        panY = moveEvent.clientY - dragStartY;
+      }
+
+      function onMouseUp() {
+        window.removeEventListener('mousemove', onMouseMove);
+        window.removeEventListener('mouseup', onMouseUp);
+      }
+
+      window.addEventListener('mousemove', onMouseMove);
+      window.addEventListener('mouseup', onMouseUp);
+    });
+
+    // Touch support for Pan and Tap
+    let touchStartDist = 0;
+    canvas.addEventListener('touchstart', function(e) {
+      if (e.touches.length === 1) {
+        isDragging = false;
+        dragStartX = e.touches[0].clientX - panX;
+        dragStartY = e.touches[0].clientY - panY;
+      } else if (e.touches.length === 2) {
+        touchStartDist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+      }
+    }, { passive: true });
+
+    canvas.addEventListener('touchmove', function(e) {
+      if (e.touches.length === 1) {
+        isDragging = true;
+        panX = e.touches[0].clientX - dragStartX;
+        panY = e.touches[0].clientY - dragStartY;
+      } else if (e.touches.length === 2) {
+        const currentDist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+        const factor = currentDist / (touchStartDist || currentDist);
+        zoomLevel = Math.min(Math.max(zoomLevel * (factor > 1 ? 1.03 : 0.97), 0.35), 3.5);
+        touchStartDist = currentDist;
+      }
+    }, { passive: true });
+
+    // Toolbar controls
+    document.getElementById('btn-toggle-sim').addEventListener('click', function() {
+      isRunning = !isRunning;
+      document.getElementById('btn-play-label').textContent = isRunning ? 'Pause' : 'Fortsetzen';
+      document.getElementById('sim-status-text').textContent = isRunning ? 'Umlaufbahnen aktiv' : 'Simulation pausiert';
+      document.getElementById('play-pause-icon').innerHTML = isRunning 
+        ? '<path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>'
+        : '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>';
+    });
+
+    document.getElementById('btn-reset-view').addEventListener('click', function() {
+      panX = 0;
+      panY = 0;
+      zoomLevel = 1.0;
+    });
+
+    document.getElementById('speed-range').addEventListener('input', function(e) {
+      simSpeed = parseFloat(e.target.value);
+      document.getElementById('speed-val').textContent = simSpeed.toFixed(1) + 'x';
+    });
+
+    const btnDiag = document.getElementById('mode-diagram');
+    const btnScale = document.getElementById('mode-scale');
+    const scaleNotice = document.getElementById('scale-notice');
+
+    btnDiag.addEventListener('click', function() {
+      isScaleMode = false;
+      btnDiag.className = 'px-2.5 py-1 rounded bg-cyan-600 text-white font-medium transition';
+      btnScale.className = 'px-2.5 py-1 rounded text-slate-400 hover:text-white transition';
+      scaleNotice.classList.add('hidden');
+      zoomLevel = 1.0;
+      panX = 0;
+      panY = 0;
+    });
+
+    btnScale.addEventListener('click', function() {
+      isScaleMode = true;
+      btnScale.className = 'px-2.5 py-1 rounded bg-amber-600 text-white font-medium transition';
+      btnDiag.className = 'px-2.5 py-1 rounded text-slate-400 hover:text-white transition';
+      scaleNotice.classList.remove('hidden');
+      zoomLevel = 0.55; // zoom out automatically to show far planets
+      panX = 0;
+      panY = 0;
+    });
+
+    document.getElementById('btn-jump-dossier').addEventListener('click', function() {
+      const card = document.getElementById('card-' + selectedBodyId);
+      if (card) {
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        card.classList.add('ring-2', 'ring-cyan-400');
+        setTimeout(() => card.classList.remove('ring-2', 'ring-cyan-400'), 2200);
+      }
+    });
+
+    function selectPlanet(planetId) {
+      selectedBodyId = planetId;
+      const planet = PLANETS_DATA.find(p => p.id === planetId);
+      if (!planet) return;
+
+      document.getElementById('inspect-name').textContent = `${planet.name} (${planet.order}. Himmelskörper)`;
+      document.getElementById('inspect-tag').textContent = planet.typeLabel;
+    }
+
+    /* =========================================================================
+       4. PLANET DOSSIERS (STECKBRIEFE)
+       ========================================================================= */
+    function renderDossiers(planets) {
+      const container = document.getElementById('planets-grid');
+      container.innerHTML = '';
+
+      planets.forEach(p => {
+        const card = document.createElement('div');
+        card.id = `card-${p.id}`;
+        card.className = 'glass-card rounded-2xl p-5 sm:p-6 flex flex-col justify-between space-y-5 border border-slate-800';
+
+        card.innerHTML = `
+          <div>
+            <!-- Card Header -->
+            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-white text-xs shadow-md" style="background-color: ${p.color}; color: #000;">
+                  #${p.order}
+                </div>
+                <div>
+                  <h3 class="font-display font-bold text-lg text-white">${p.name}</h3>
+                  <span class="text-xs font-mono text-cyan-400">${p.typeLabel}</span>
+                </div>
+              </div>
+              <button onclick="selectPlanet('${p.id}'); document.getElementById('simulation').scrollIntoView({behavior:'smooth'});" title="Im Orbit ansehen" class="p-1.5 rounded-lg bg-space-800 hover:bg-cyan-600/30 text-cyan-300 text-xs transition">
+                Orbit 🔭
+              </button>
+            </div>
+
+            <!-- Key Scientific Parameters -->
+            <div class="grid grid-cols-2 gap-2.5 my-4 text-xs font-mono">
+              <div class="p-2.5 bg-space-950/70 rounded-xl border border-slate-800/80">
+                <span class="text-slate-400 block text-[10px] uppercase">Sonnen-Distanz:</span>
+                <span class="text-slate-100 font-semibold">${p.distMioKm} Mio. km</span>
+                <span class="text-cyan-400 text-[10px] block">(${p.distAU} AE)</span>
+              </div>
+              <div class="p-2.5 bg-space-950/70 rounded-xl border border-slate-800/80">
+                <span class="text-slate-400 block text-[10px] uppercase">Durchmesser:</span>
+                <span class="text-slate-100 font-semibold">${p.diameterKm.toLocaleString('de-CH')} km</span>
+                <span class="text-amber-400 text-[10px] block">(${p.relEarthDiam}x Erde)</span>
+              </div>
+              <div class="p-2.5 bg-space-950/70 rounded-xl border border-slate-800/80">
+                <span class="text-slate-400 block text-[10px] uppercase">Umlaufzeit (Jahr):</span>
+                <span class="text-slate-100 font-semibold">${p.orbitalPeriodDays} Erdtage</span>
+                <span class="text-slate-400 text-[10px] block">(${p.orbitalPeriodYears} J.)</span>
+              </div>
+              <div class="p-2.5 bg-space-950/70 rounded-xl border border-slate-800/80">
+                <span class="text-slate-400 block text-[10px] uppercase">Temperatur:</span>
+                <span class="text-slate-100 font-semibold">${p.tempRange}</span>
+              </div>
+            </div>
+
+            <!-- Atmosphere & Moons note -->
+            <div class="space-y-1.5 text-xs text-slate-300">
+              <p><strong class="text-slate-400 font-mono">Atmosphäre:</strong> ${p.atmosphere}</p>
+              <p><strong class="text-slate-400 font-mono">Bekannte Monde:</strong> ${p.moons}</p>
+              <p class="text-slate-400 italic text-[11px] pt-1 border-t border-slate-800/50">${p.fact}</p>
+            </div>
+          </div>
+
+          <!-- Interactive Accordion for Research Question -->
+          <div class="pt-3 border-t border-slate-800">
+            <button onclick="toggleResearch('${p.id}')" class="w-full py-2 px-3 rounded-xl bg-space-900 hover:bg-space-850 border border-cyan-900/40 text-left flex items-center justify-between text-xs font-semibold text-cyan-300 transition">
+              <span class="flex items-center gap-1.5">
+                <span class="text-sm">🔍</span> Forscherfrage: ${p.researchQuestion}
+              </span>
+              <span id="icon-q-${p.id}" class="text-slate-400 text-xs font-mono ml-2">&plus;</span>
+            </button>
+            <div id="ans-q-${p.id}" class="hidden mt-2 p-3 rounded-xl bg-space-950 border border-slate-800 text-xs text-slate-200 leading-relaxed">
+              <strong class="text-amber-400 block mb-1 font-mono uppercase text-[10px]">LP 21 Erklärung:</strong>
+              ${p.researchAnswer}
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function toggleResearch(id) {
+      const box = document.getElementById(`ans-q-${id}`);
+      const icon = document.getElementById(`icon-q-${id}`);
+      if (box.classList.contains('hidden')) {
+        box.classList.remove('hidden');
+        icon.innerHTML = '&minus;';
+      } else {
+        box.classList.add('hidden');
+        icon.innerHTML = '&plus;';
+      }
+    }
+
+    function filterPlanets(category) {
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.className = 'filter-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition';
+      });
+      event.target.className = 'filter-btn active px-3 py-1.5 rounded-lg bg-cyan-600 text-white font-medium';
+
+      if (category === 'all') {
+        renderDossiers(PLANETS_DATA);
+      } else {
+        const filtered = PLANETS_DATA.filter(p => p.type === category);
+        renderDossiers(filtered);
+      }
+    }
+
+    /* =========================================================================
+       5. INTERACTIVE CALCULATOR ENGINES
+       ========================================================================= */
+    const weightInput = document.getElementById('user-weight-input');
+    const ageInput = document.getElementById('user-age-input');
+
+    function updateCalculators() {
+      const userWeight = parseFloat(weightInput.value) || 50;
+      const userAge = parseFloat(ageInput.value) || 14;
+
+      // Update Gravity outputs
+      const gravContainer = document.getElementById('gravity-results');
+      gravContainer.innerHTML = '';
+
+      // Bodies to showcase
+      const displayBodies = [
+        { name: 'Mond (Erde)', factor: 0.166, tag: '0.17 g' },
+        { name: 'Merkur', factor: 0.38, tag: '0.38 g' },
+        { name: 'Mars', factor: 0.38, tag: '0.38 g' },
+        { name: 'Venus', factor: 0.91, tag: '0.91 g' },
+        { name: 'Saturn', factor: 1.07, tag: '1.07 g' },
+        { name: 'Jupiter', factor: 2.53, tag: '2.53 g' }
+      ];
+
+      displayBodies.forEach(b => {
+        const w = (userWeight * b.factor).toFixed(1);
+        const cell = document.createElement('div');
+        cell.className = 'p-2 rounded-lg bg-space-950 border border-slate-800 text-center';
+        cell.innerHTML = `
+          <div class="text-[10px] text-slate-400 font-mono">${b.name}</div>
+          <div class="text-base font-bold font-display text-cyan-300">${w} kg</div>
+          <div class="text-[9px] text-slate-500 font-mono">${b.tag}</div>
+        `;
+        gravContainer.appendChild(cell);
+      });
+
+      // Update Age outputs
+      const ageContainer = document.getElementById('age-results');
+      ageContainer.innerHTML = '';
+
+      const ageBodies = [
+        { name: 'Merkur', period: 0.24 },
+        { name: 'Venus', period: 0.62 },
+        { name: 'Mars', period: 1.88 },
+        { name: 'Jupiter', period: 11.86 },
+        { name: 'Saturn', period: 29.45 },
+        { name: 'Neptun', period: 164.8 }
+      ];
+
+      ageBodies.forEach(b => {
+        const a = (userAge / b.period).toFixed(1);
+        const cell = document.createElement('div');
+        cell.className = 'p-2 rounded-lg bg-space-950 border border-slate-800 text-center';
+        cell.innerHTML = `
+          <div class="text-[10px] text-slate-400 font-mono">${b.name}</div>
+          <div class="text-base font-bold font-display text-amber-300">${a}</div>
+          <div class="text-[9px] text-slate-500 font-mono">Planetenjahre</div>
+        `;
+        ageContainer.appendChild(cell);
+      });
+    }
+
+    function setWeightPreset(val) {
+      weightInput.value = val;
+      updateCalculators();
+    }
+
+    weightInput.addEventListener('input', updateCalculators);
+    ageInput.addEventListener('input', updateCalculators);
+
+    /* =========================================================================
+       6. LP 21 QUIZ CONTROLLER
+       ========================================================================= */
+    let currentQuizIndex = 0;
+    let quizScore = 0;
+    let answeredCurrent = false;
+
+    const quizQuestionText = document.getElementById('quiz-question-text');
+    const quizOptionsContainer = document.getElementById('quiz-options-container');
+    const quizFeedback = document.getElementById('quiz-feedback');
+    const btnNextQuestion = document.getElementById('btn-next-question');
+    const quizCurrentIdx = document.getElementById('quiz-current-idx');
+    const quizTotalCount = document.getElementById('quiz-total-count');
+    const quizProgressBar = document.getElementById('quiz-progress-bar');
+    const quizBadge = document.getElementById('quiz-competence-badge');
+
+    function loadQuizQuestion(index) {
+      answeredCurrent = false;
+      btnNextQuestion.disabled = true;
+      btnNextQuestion.className = 'px-5 py-2.5 rounded-xl bg-slate-800 text-slate-500 font-semibold text-sm cursor-not-allowed transition';
+      quizFeedback.classList.add('hidden');
+      quizFeedback.className = 'hidden p-4 rounded-2xl text-xs sm:text-sm border leading-relaxed';
+
+      const q = QUIZ_QUESTIONS[index];
+      quizCurrentIdx.textContent = (index + 1).toString();
+      quizTotalCount.textContent = QUIZ_QUESTIONS.length.toString();
+      quizBadge.textContent = q.competence;
+      quizQuestionText.textContent = q.question;
+
+      // Progress bar percentage
+      const pct = ((index + 1) / QUIZ_QUESTIONS.length) * 100;
+      quizProgressBar.style.width = pct + '%';
+
+      quizOptionsContainer.innerHTML = '';
+      q.options.forEach((optText, optIdx) => {
+        const btn = document.createElement('button');
+        btn.className = 'w-full text-left p-3.5 sm:p-4 rounded-xl bg-space-900 hover:bg-space-800 border border-slate-800 text-slate-200 text-xs sm:text-sm font-medium transition flex items-start gap-3';
+        btn.innerHTML = `
+          <span class="w-6 h-6 rounded-lg bg-space-950 flex-shrink-0 flex items-center justify-center font-mono font-bold text-xs text-cyan-400 border border-slate-800">
+            ${String.fromCharCode(65 + optIdx)}
+          </span>
+          <span class="leading-relaxed">${optText}</span>
+        `;
+        btn.onclick = () => handleQuizAnswer(optIdx, btn);
+        quizOptionsContainer.appendChild(btn);
+      });
+    }
+
+    function handleQuizAnswer(selectedIndex, clickedBtn) {
+      if (answeredCurrent) return;
+      answeredCurrent = true;
+
+      const q = QUIZ_QUESTIONS[currentQuizIndex];
+      const isCorrect = selectedIndex === q.correct;
+
+      if (isCorrect) {
+        quizScore++;
+      }
+
+      // Highlight options
+      const allButtons = quizOptionsContainer.querySelectorAll('button');
+      allButtons.forEach((b, idx) => {
+        b.disabled = true;
+        b.classList.remove('hover:bg-space-800');
+        if (idx === q.correct) {
+          b.classList.add('border-emerald-500', 'bg-emerald-950/60', 'text-emerald-200');
+        } else if (idx === selectedIndex && !isCorrect) {
+          b.classList.add('border-rose-500', 'bg-rose-950/60', 'text-rose-200');
+        } else {
+          b.classList.add('opacity-40');
+        }
+      });
+
+      // Show Feedback Box
+      quizFeedback.classList.remove('hidden');
+      if (isCorrect) {
+        quizFeedback.classList.add('bg-emerald-500/10', 'border-emerald-500/30', 'text-emerald-200');
+        quizFeedback.innerHTML = `<strong>Richtig!</strong> ${q.explanation}`;
+      } else {
+        quizFeedback.classList.add('bg-rose-500/10', 'border-rose-500/30', 'text-rose-200');
+        quizFeedback.innerHTML = `<strong>Leider nicht ganz.</strong> ${q.explanation}`;
+      }
+
+      // Enable next button
+      btnNextQuestion.disabled = false;
+      btnNextQuestion.className = 'px-5 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-semibold text-sm cursor-pointer transition shadow-lg shadow-cyan-600/30';
+      if (currentQuizIndex === QUIZ_QUESTIONS.length - 1) {
+        btnNextQuestion.textContent = 'Auswertung anzeigen 🎉';
+      } else {
+        btnNextQuestion.textContent = 'Nächste Frage \u2192';
+      }
+    }
+
+    btnNextQuestion.addEventListener('click', function() {
+      if (currentQuizIndex < QUIZ_QUESTIONS.length - 1) {
+        currentQuizIndex++;
+        loadQuizQuestion(currentQuizIndex);
+      } else {
+        showQuizSummary();
+      }
+    });
+
+    function showQuizSummary() {
+      document.getElementById('quiz-active-box').classList.add('hidden');
+      const sumBox = document.getElementById('quiz-summary-box');
+      sumBox.classList.remove('hidden');
+
+      document.getElementById('quiz-final-score').textContent = quizScore.toString();
+      document.getElementById('quiz-final-total').textContent = QUIZ_QUESTIONS.length.toString();
+
+      const tierBadge = document.getElementById('quiz-tier-badge');
+      const ratio = quizScore / QUIZ_QUESTIONS.length;
+
+      if (ratio >= 0.85) {
+        tierBadge.className = 'p-4 rounded-2xl max-w-md mx-auto text-sm text-left bg-emerald-500/10 border border-emerald-500/30 text-emerald-200';
+        tierBadge.innerHTML = `
+          <strong class="font-bold block text-base mb-1">🌟 Hervorragend: LP 21 Kompetenzstufe 3 erreicht!</strong>
+          Du hast den Aufbau des Sonnensystems, Gravitationswirkungen und astronomische Modellkritik vollständig gemeistert und kannst physikalische Zusammenhänge treffsicher erklären.
+        `;
+      } else if (ratio >= 0.55) {
+        tierBadge.className = 'p-4 rounded-2xl max-w-md mx-auto text-sm text-left bg-cyan-500/10 border border-cyan-500/30 text-cyan-200';
+        tierBadge.innerHTML = `
+          <strong class="font-bold block text-base mb-1">👍 Gut gemacht: LP 21 Grundkompetenzen gesichert!</strong>
+          Die grundlegende Unterscheidung von Gesteins- und Gasplaneten sitzt. Vertiefe nochmals die physikalischen Ursachen von Jahreszeiten und Fluchtgeschwindigkeiten im Physiklabor.
+        `;
+      } else {
+        tierBadge.className = 'p-4 rounded-2xl max-w-md mx-auto text-sm text-left bg-amber-500/10 border border-amber-500/30 text-amber-200';
+        tierBadge.innerHTML = `
+          <strong class="font-bold block text-base mb-1">📖 Noch im Aufbau begriffen:</strong>
+          Nutze die Planeten-Dossiers und Forscherfragen oberhalb, um dein Wissen über Massstäbe und Gravitation weiter zu stärken.
+        `;
+      }
+    }
+
+    function restartQuiz() {
+      currentQuizIndex = 0;
+      quizScore = 0;
+      document.getElementById('quiz-summary-box').classList.add('hidden');
+      document.getElementById('quiz-active-box').classList.remove('hidden');
+      loadQuizQuestion(0);
+    }
+
+    /* =========================================================================
+       7. GENERAL UTILS & WINDOW LIFECYCLE
+       ========================================================================= */
+    function toggleModal(modalId) {
+      const el = document.getElementById(modalId);
+      if (!el) return;
+      el.classList.toggle('hidden');
+    }
+
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+    });
+
+    window.onload = function() {
+      initStars();
+      resizeCanvas();
+      renderSimulation();
+      renderDossiers(PLANETS_DATA);
+      updateCalculators();
+      loadQuizQuestion(0);
+    };
+  </script>
+</body>
+</html>
